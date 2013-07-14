@@ -10,6 +10,8 @@
 
 #import <Crashlytics/Crashlytics.h>
 
+static NSString * const kCrashReporterKey = @"<Your Key>";
+
 @implementation SJCrashReport
 
 + (id)setup
@@ -34,7 +36,7 @@
     self = [super init];
     
     if (self) {
-        [Crashlytics startWithAPIKey:@"e048ae4717c70d9e3eccd02fdd074b4af8ee4db8"];
+        [Crashlytics startWithAPIKey:kCrashReporterKey];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(didReceiveMemoryWarning:)
