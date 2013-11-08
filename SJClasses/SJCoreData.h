@@ -12,7 +12,9 @@
 
 @property (nonatomic, strong) NSManagedObjectContext *context;
 
-+ (SJCoreData *)coreDataModelName:(NSString *)name keyName:(NSString *)key;
+@property (nonatomic, strong) NSManagedObjectContext *childContext;
+
++ (instancetype)coreDataModelName:(NSString *)name keyName:(NSString *)key;
 
 - (void)reset;
 - (void)save;

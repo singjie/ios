@@ -109,23 +109,31 @@
 
 - (void)saveBottomUp
 {
-    if (![self.context hasChanges]) {
+    if (![self.childContext hasChanges]) {
         return;
     }
-    
-    [self.context performBlockAndWait:^{
+
+    [self.childContext performBlock:^{
         NSError *error = nil;
-        [self.context save:&error];
-        
+        [self.childContext save:&error];
+
         NSParameterAssert(error == nil);
-        
-        [self.mainPrivateContext performBlock:^{
+
+        [self.context performBlock:^{
             NSError *error = nil;
-            [self.mainPrivateContext save:&error];
-            
+            [self.context save:&error];
+
             NSParameterAssert(error == nil);
+
+            [self.mainPrivateContext performBlock:^{
+                NSError *error = nil;
+                [self.mainPrivateContext save:&error];
+
+                NSParameterAssert(error == nil);
+            }];
         }];
     }];
+
 }
 
 #pragma mark - Application's Documents directory
@@ -204,6 +212,18 @@
     
     NSParameterAssert(_managedObjectModel);
     return _managedObjectModel;
+}
+
+- (NSManagedObjectContext *)childContext
+{
+    if (_childContext) {
+        return _childContext;
+    }
+
+    _childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    _childContext.parentContext = self.context;
+
+    return _childContext;
 }
 
 
